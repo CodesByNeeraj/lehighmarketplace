@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Condition {
+  New
+  Like_New
+  Acceptable
+  Poor
+}
+
+//[],@relation - listings,saved,sent_messages,buyer_conversations,seller_conversations are all 1 to many relationship. meaning 1 user can have many of these
+model Student {
+  student_id   String   @id @default(uuid())
+  email        String   @unique
+  password_hash String
+  created_at   DateTime @default(now())
+  
+  profile      StudentProfile?
+  listings     Listing[]
+  saved        SavedListing[]
+  sent_messages     Message[]      @relation("SentMessages")
+  buyer_conversations  Conversation[] @relation("BuyerConversations")
+  seller_conversations Conversation[] @relation("SellerConversations")
+}
+
+//references: what columns to link to
+model StudentProfile {
+  profile_id   String  @id @default(uuid())
+  student_id   String  @unique
+  display_name String
+  bio          String?
+  gender       String
+  age          Int
+
+  student      Student @relation(fields: [student_id], references: [student_id])
+}
+
+model Listing {
+  item_id         String    @id @default(uuid())
+  seller_id       String
+  title           String
+  description     String
+  price           Decimal
+  condition       Condition
+  meetup_location String
+  is_sold         Boolean   @default(false)
+  created_at      DateTime  @default(now())
+
+  seller          Student        @relation(fields: [seller_id], references: [student_id])
+  saved_by        SavedListing[]
+  conversations   Conversation[]
+}
+
+model SavedListing {
+  save_id    String @id @default(uuid())
+  student_id String
+  listing_id String
+
+  student    Student @relation(fields: [student_id], references: [student_id])
+  listing    Listing @relation(fields: [listing_id], references: [item_id])
+
+  @@unique([student_id, listing_id])
+}
+
+model Admin {
+  admin_id     String @id @default(uuid())
+  staff_email  String @unique
+  password_hash String
+  access_level Int    @default(1)
+}
+
+model Conversation {
+  conversation_id String   @id @default(uuid())
+  listing_id      String
+  buyer_id        String
+  seller_id       String
+  created_at      DateTime @default(now())
+
+  listing         Listing   @relation(fields: [listing_id], references: [item_id])
+  buyer           Student   @relation("BuyerConversations", fields: [buyer_id], references: [student_id])
+  seller          Student   @relation("SellerConversations", fields: [seller_id], references: [student_id])
+  messages        Message[]
+}
+
+model Message {
+  message_id      String   @id @default(uuid())
+  conversation_id String
+  sender_id       String
+  message_text    String
+  sent_at         DateTime @default(now())
+  is_read         Boolean  @default(false)
+
+  conversation    Conversation @relation(fields: [conversation_id], references: [conversation_id])
+  sender          Student      @relation("SentMessages", fields: [sender_id], references: [student_id])
+}
+
+
+
+
+
+
+
+
