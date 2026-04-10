@@ -7,7 +7,7 @@ const router = express.Router();
 router.delete('/delete-listing/:item_id',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id
-        const item_id = parseInt(req.params.item_id)
+        const item_id = req.params.item_id
         const listing = await prisma.listing.findUnique({where:{item_id}})
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
