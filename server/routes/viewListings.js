@@ -50,4 +50,23 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
     }
 })
 
+//view a particular listing
+router.get('/view-listing/:item_id',authenticate,async(req, res)=>{
+    try{
+        const item_id = parseInt(req.params.item_id)
+        const listing = await prisma.listing.findUnique({
+            where:{item_id},
+            include:{seller:{select:{name:true,email:true}}}
+        })
+        if (!listing){
+            return res.status(404).json({error:"Listing not found"})
+        }
+        res.status(200).json(listing)
+
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error:'Server error'})
+    }
+})
+
 export default router;
