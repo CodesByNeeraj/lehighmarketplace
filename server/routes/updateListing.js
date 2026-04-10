@@ -7,7 +7,7 @@ const router = express.Router();
 router.put('/update-listing/:item_id',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id
-        const item_id = parseInt(req.params.item_id)
+        const item_id = req.params.item_id
         const {title,description,price,condition,meetupLocation} = req.body
         const listing = await prisma.listing.findUnique({where:{item_id}})
         if (!listing){
