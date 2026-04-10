@@ -1,4 +1,4 @@
-import express from "express"
+import express from 'express';
 import prisma from '../db/prisma.js';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
