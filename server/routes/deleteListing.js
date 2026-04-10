@@ -4,10 +4,10 @@ import prisma from '../db/prisma.js';
 
 const router = express.Router();
 
-router.delete('/delete-listing',authenticate,async(req,res)=>{
+router.delete('/delete-listing/:item_id',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id
-        const {item_id} = req.body
+        const item_id = parseInt(req.params.item_id)
         const listing = await prisma.listing.findUnique({where:{item_id}})
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
@@ -15,7 +15,7 @@ router.delete('/delete-listing',authenticate,async(req,res)=>{
         if (listing.seller_id!==studentId){
             return res.status(403).json({error:"Forbidden: Cannot delete other seller's listings"})
         }
-        const deleteListing = await prisma.listing.delete({
+        await prisma.listing.delete({
             where:{
                 item_id
             }
