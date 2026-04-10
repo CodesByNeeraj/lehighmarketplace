@@ -57,7 +57,8 @@ router.post('/register',async(req,res)=>{
 
         //create student account
         const student = await prisma.student.create({
-            data:{email,password_hash:hash,profile:{create:{display_name:name},include:{profile:true}}}
+            data:{email,password_hash:hash,profile:{create:{display_name:name}}},
+            include:{profile:true}
         });
         const token = jwt.sign({id:student.student_id,role:"STUDENT"},process.env.JWT_SECRET,{expiresIn:'7d'});
 
@@ -68,7 +69,7 @@ router.post('/register',async(req,res)=>{
 
     
     }catch(err){
-        console.error(error)
+        console.error(err)
         res.status(500).json({error:'Server Error'})
     }
 
