@@ -8,7 +8,7 @@ router.post('/create-listing',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id;
         const {title,description,price,condition,meetup_location}  = req.body
-        const listing = await prisma.listing.create({
+        await prisma.listing.create({
             data:{
                 seller_id:studentId,
                 title:title,
