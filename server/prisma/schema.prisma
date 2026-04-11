@@ -37,8 +37,8 @@ model StudentProfile {
   student_id   String  @unique
   display_name String
   bio          String?
-  gender       String
-  age          Int
+  gender       String?
+  age          Int?
 
   student      Student @relation(fields: [student_id], references: [student_id])
 }
@@ -65,7 +65,7 @@ model SavedListing {
   listing_id String
 
   student    Student @relation(fields: [student_id], references: [student_id])
-  listing    Listing @relation(fields: [listing_id], references: [item_id])
+  listing    Listing @relation(fields: [listing_id], references: [item_id], onDelete: Cascade)
 
   @@unique([student_id, listing_id])
 }
@@ -84,7 +84,7 @@ model Conversation {
   seller_id       String
   created_at      DateTime @default(now())
 
-  listing         Listing   @relation(fields: [listing_id], references: [item_id])
+  listing         Listing   @relation(fields: [listing_id], references: [item_id], onDelete: Cascade)
   buyer           Student   @relation("BuyerConversations", fields: [buyer_id], references: [student_id])
   seller          Student   @relation("SellerConversations", fields: [seller_id], references: [student_id])
   messages        Message[]
@@ -98,11 +98,24 @@ model Message {
   sent_at         DateTime @default(now())
   is_read         Boolean  @default(false)
 
-  conversation    Conversation @relation(fields: [conversation_id], references: [conversation_id])
+  conversation    Conversation @relation(fields: [conversation_id], references: [conversation_id], onDelete: Cascade)
   sender          Student      @relation("SentMessages", fields: [sender_id], references: [student_id])
 }
 
+model Waitlist {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  created_at DateTime @default(now())
+}
 
+model VerificationCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  type      String   // "STUDENT_EMAIL_VERIFY" | "ADMIN_MFA" | "PASSWORD_RESET"
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 
 
 
