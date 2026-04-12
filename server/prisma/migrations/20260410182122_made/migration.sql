@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "StudentProfile" ALTER COLUMN "gender" DROP NOT NULL,
+ALTER COLUMN "age" DROP NOT NULL;
