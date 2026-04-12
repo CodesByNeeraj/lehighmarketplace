@@ -9,6 +9,7 @@ export default function Landing() {
     }
     const [waitlistEmail, setWaitlistEmail] = useState('');
     const [waitlistStatus, setWaitlistStatus] = useState('');
+    const [loading, setLoading] = useState(false);
 
     // handle waitlist form submission
     const handleWaitlist = async (e) => {
@@ -18,6 +19,7 @@ export default function Landing() {
             setTimeout(() => setWaitlistStatus(''), 3000);
             return;
         }
+        setLoading(true);
         try {
             await api.post('/waitlist/save-to-waitlist', { email: waitlistEmail });
             setWaitlistStatus('success');
@@ -29,6 +31,7 @@ export default function Landing() {
                 setWaitlistStatus('error');
             }
         } finally {
+            setLoading(false);
             setTimeout(() => setWaitlistStatus(''), 3000);
         }
     }
@@ -132,8 +135,9 @@ export default function Landing() {
                     />
                     <button
                         type="submit"
-                        className="bg-[#4E3629] hover:bg-[#3d2a1f] text-white px-6 py-2 rounded text-sm font-medium transition-colors">
-                        Join
+                        disabled={loading}
+                        className="bg-[#4E3629] hover:bg-[#3d2a1f] disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-2 rounded text-sm font-medium transition-colors">
+                        {loading ? 'Joining...' : 'Join'}
                     </button>
                 </form>
 
