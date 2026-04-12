@@ -14,6 +14,7 @@ router.post('/save-to-waitlist',async(req,res)=>{
         res.status(201).json({message:"Thanks! Keep a lookout for more updates."})
 
     }catch(err){
+        //prisma error code for unique constraint violation
         if (err.code === 'P2002'){
             return res.status(409).json({error:"Email already on waitlist"})
         }
