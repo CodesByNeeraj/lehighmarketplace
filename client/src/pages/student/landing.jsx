@@ -15,6 +15,7 @@ export default function Landing() {
         e.preventDefault();
         if (!waitlistEmail.endsWith('@lehigh.edu')) {
             setWaitlistStatus('error');
+            setTimeout(() => setWaitlistStatus(''), 3000);
             return;
         }
         try {
@@ -27,6 +28,8 @@ export default function Landing() {
             } else {
                 setWaitlistStatus('error');
             }
+        } finally {
+            setTimeout(() => setWaitlistStatus(''), 3000);
         }
     }
 
