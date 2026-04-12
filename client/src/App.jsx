@@ -1,10 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/authContext';
 
-// auth pages
-import Login from './pages/auth/login.jsx';
-import Register from './pages/auth/register.jsx';
-
 // student pages
 import Landing from './pages/student/landing.jsx';
 
