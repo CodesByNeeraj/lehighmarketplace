@@ -8,9 +8,9 @@ const router = express.Router()
 router.post('/login',async(req,res)=>{
     try{
         const {email,password} = req.body;
-        const existingStudent = await prisma.student.findUnique({where:{email}})
+        const existingStudent = await prisma.student.findUnique({where:{email},include:{profile:true}})
         if (!existingStudent){
-            return res.status(404).json({error:'Student not found!'})
+            return res.status(404).json({error:'Invalid email or password!'})
         }
         const match = await bcrypt.compare(password,existingStudent.password_hash)
         if(!match){
@@ -19,7 +19,7 @@ router.post('/login',async(req,res)=>{
         //because server is stateless, we need a way to remember who the student is post login between requests
         //we use jwt token to remember the user
         const token = jwt.sign({id:existingStudent.student_id,email:existingStudent.email,role:"STUDENT"},process.env.JWT_SECRET,{expiresIn:'7d'})
-        res.json({token,student:{id: existingStudent.student_id,email: existingStudent.email}})
+        res.json({token,student:{id: existingStudent.student_id,email: existingStudent.email,name:existingStudent.profile?.display_name,role:'STUDENT'}})
     }catch(err){
         res.status(500).json({error:"Internal server error"})
     }
