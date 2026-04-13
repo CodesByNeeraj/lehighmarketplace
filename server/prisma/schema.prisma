@@ -51,6 +51,7 @@ model Listing {
   price           Decimal
   condition       Condition
   meetup_location String
+  image_url       String?
   is_sold         Boolean   @default(false)
   created_at      DateTime  @default(now())
 
