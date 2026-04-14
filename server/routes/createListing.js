@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/create-listing',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id;
-        const {title,description,price,condition,meetup_location}  = req.body
+        const {title,description,price,condition,meetup_location,image_url}  = req.body
         await prisma.listing.create({
             data:{
                 seller_id:studentId,
@@ -15,7 +15,8 @@ router.post('/create-listing',authenticate,async(req,res)=>{
                 description:description,
                 price:price,
                 condition:condition,
-                meetup_location:meetup_location, 
+                meetup_location:meetup_location,
+                image_url:image_url ?? null,
             }
         })
         res.status(201).json({message:"Listing successfully created!"})
