@@ -8,7 +8,7 @@ router.put('/update-listing/:item_id',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id
         const item_id = req.params.item_id
-        const {title,description,price,condition,meetupLocation} = req.body
+        const {title,description,price,condition,meetupLocation,image_url} = req.body
         const listing = await prisma.listing.findUnique({where:{item_id}})
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
@@ -16,9 +16,10 @@ router.put('/update-listing/:item_id',authenticate,async(req,res)=>{
         if (listing.seller_id!==studentId){
             return res.status(403).json({error:"Forbidden: Cannot update other seller's listings"})
         }
+        //if no image, then left as is. if there is image, spread operator will spread it meaning add the image url to the object
         await prisma.listing.update({
             where:{ item_id },
-            data:{ title, description, price, condition, meetup_location: meetupLocation }
+            data:{ title, description, price, condition, meetup_location: meetupLocation, ...(image_url && { image_url }) }
         })
     res.status(200).json({message:"Listing successfully updated!"})
 
