@@ -15,6 +15,7 @@ router.get('/weather',async(req,res)=>{
     
 export default router
 
+//example of what is being returned
 // {
 //   "currentTime": "2026-04-13T22:17:42.897856137Z",
 //   "timeZone": {
