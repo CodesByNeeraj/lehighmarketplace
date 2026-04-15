@@ -5,7 +5,7 @@ import { useAuth } from '../../context/authContext';
 import lehighImg from '/ClaytonUni.jpg';
 
 export default function Login() {
-  const { login } = useAuth();
+  const {login} = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -57,7 +57,6 @@ export default function Login() {
           </p>
         </div>
       </div>
-
       {/*right panel*/}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
@@ -69,7 +68,7 @@ export default function Login() {
               {error}
             </div>
           )}
-
+          {/*login form*/}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
