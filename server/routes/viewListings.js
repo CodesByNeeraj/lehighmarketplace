@@ -9,6 +9,7 @@ const router = express.Router()
 //get all listings (shown in homepage)
 router.get('/get-listings',authenticate,async(req,res)=>{
     try{
+        //find many in prisma returns an array
         const listings = await prisma.listing.findMany({where: {is_sold:false},orderBy:{created_at:'desc'}})
         res.status(200).json(listings)
         
@@ -40,9 +41,8 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
     try{
         const savedListings = await prisma.savedListing.findMany(
             {where:{student_id:req.user.id},include:{listing:true}}
-
         )
-        res.status(200).json(savedListings)
+        res.status(200).json(savedListings.map(s => s.listing))
 
     }catch(err){
         console.error(err)
@@ -53,10 +53,11 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
 //view a particular listing
 router.get('/view-listing/:item_id',authenticate,async(req, res)=>{
     try{
-        const item_id = parseInt(req.params.item_id)
+        const item_id = req.params.item_id
+        //findUnique returns a single object - prisma rule
         const listing = await prisma.listing.findUnique({
             where:{item_id},
-            include:{seller:{select:{name:true,email:true}}}
+            include:{seller:{select:{email:true, profile:{select:{display_name:true}}}}}
         })
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
