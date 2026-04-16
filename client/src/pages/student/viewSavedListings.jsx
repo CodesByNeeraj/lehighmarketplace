@@ -19,7 +19,7 @@ export default function ViewSaved(){
     listing.title.toLowerCase().includes(query.toLowerCase()) ||
     listing.description.toLowerCase().includes(query.toLowerCase()))
 
-    
+    //run on render (get saved listings)
     useEffect(() => {
     api.get('/listings/get-saved-listings')
         .then(res => setListings(res.data))
