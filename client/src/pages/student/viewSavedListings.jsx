@@ -53,7 +53,7 @@ export default function ViewSaved(){
                 {/*empty state*/}
                 {!loading && !error && filteredListings.length === 0 && (
                     <div className="text-center text-gray-400 py-20">
-                        {query ? 'No listings match your search.' : 'No listings yet. Be the first to create one!'}
+                        {query ? 'No listings match your search.' : 'No listings yet. Tell your friends to create one!'}
                     </div>
                 )}
                 {/*3 column grid*/}
