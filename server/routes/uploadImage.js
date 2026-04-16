@@ -5,13 +5,22 @@ import authenticate from '../middleware/auth.js';
 
 const router = express.Router();
 
-//store file in memory (no disk write)
-const upload = multer({ storage: multer.memoryStorage() });
+//store file in memory, only allow images
+const upload = multer({
+    storage: multer.memoryStorage(),
+    fileFilter: (_req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
 
 router.post('/upload-image', authenticate, upload.single('image'), async (req, res) => {
-    try {
+    try{
         if (!req.file) {
-            return res.status(400).json({ error: 'No image provided' });
+            return res.status(400).json({error: 'No image provided'});
         }
 
         //upload buffer directly to cloudinary
@@ -25,11 +34,11 @@ router.post('/upload-image', authenticate, upload.single('image'), async (req, r
             ).end(req.file.buffer);
         });
 
-        res.status(200).json({ image_url: result.secure_url });
+        res.status(200).json({image_url: result.secure_url});
 
-    } catch (err) {
+    }catch (err){
         console.error(err);
-        res.status(500).json({ error: 'Image upload failed' });
+        res.status(500).json({error: 'Image upload failed'});
     }
 });
 
