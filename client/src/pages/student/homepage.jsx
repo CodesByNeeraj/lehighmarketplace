@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/client';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/navbar.jsx';
+import { useAuth } from '../../context/authContext.jsx';
 
 export default function Homepage() {
     const [listings, setListings] = useState([]);
@@ -9,6 +11,8 @@ export default function Homepage() {
     const [weatherCondition,setWeatherCondition] = useState('')
     const [temperature,setTemperature]=useState('')
     const [thunderstormp,setThunderstormp] = useState('')
+    const [query, setQuery] = useState('')
+    const {user} = useAuth();
     const navigate = useNavigate();
 
     const viewListing = (id) => {
@@ -18,6 +22,13 @@ export default function Homepage() {
     const createListing = ()=>{
         navigate(`/home/listings/create`)
     }
+
+    //search bar function - also excludes own listings
+    const filteredListings = listings
+        .filter(listing => listing.seller_id !== user?.id)
+        .filter(listing =>
+            listing.title.toLowerCase().includes(query.toLowerCase()) ||
+            listing.description.toLowerCase().includes(query.toLowerCase()))
 
     useEffect(()=>{
         api.get('/current/weather')
@@ -38,13 +49,14 @@ export default function Homepage() {
 
     return (
         <div className="min-h-screen bg-white text-[#1a1a1a]">
+            <Navbar/>
             <main className="max-w-6xl mx-auto px-6 py-10">
                 <div className="flex items-center justify-between mb-1">
                     <h1 className="text-2xl font-bold text-[#4E3629]">Browse Listings</h1>
                     {/*create listing*/}
                     <button
                         onClick={createListing}
-                        className="bg-[#4E3629] hover:bg-[#3d2a1f] text-white transition-colors px-4 py-2 rounded text-sm font-medium">
+                        className="bg-[#4E3629] hover:bg-[#3d2a1f] text-white transition-colors px-4 py-2 rounded text-sm font-medium cursor-pointer">
                         Create Listing
                     </button>
                 </div>
@@ -60,6 +72,15 @@ export default function Homepage() {
                         )}
                     </div>
                 )}
+                {/*search bar*/}
+                <input
+                    type="text"
+                    placeholder="Search listings by title or description..."
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2 mb-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#4E3629]"
+                />
+
                 {/*loading*/}
                 {loading && (
                     <div className="text-center text-gray-400 py-20">Loading listings...</div>
@@ -70,13 +91,15 @@ export default function Homepage() {
                     <div className="text-center text-red-500 py-20">{error}</div>
                 )}
                 {/*empty state*/}
-                {!loading && !error && listings.length === 0 && (
-                    <div className="text-center text-gray-400 py-20">No listings yet. Be the first to create one!</div>
+                {!loading && !error && filteredListings.length === 0 && (
+                    <div className="text-center text-gray-400 py-20">
+                        {query ? 'No listings match your search.' : 'No listings yet. Be the first to create one!'}
+                    </div>
                 )}
                 {/*3 column grid*/}
-                {!loading && !error && listings.length > 0 && (
+                {!loading && !error && filteredListings.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {listings.map(listing => (
+                        {filteredListings.map(listing => (
                             <div
                                 key={listing.item_id}
                                 onClick={() => viewListing(listing.item_id)}
