@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import api from '../../api/client';
 import {useNavigate} from 'react-router-dom';
 import {Trash2, Pencil} from 'lucide-react';
@@ -38,17 +38,20 @@ export default function ViewOwnListings() {
             <main className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold text-[#4E3629] mb-1">My Listings</h1>
                 <p className="text-sm text-gray-500 mb-8">Items you have listed for sale</p>
-
+                {/*loading*/}
                 {loading && (
                     <div className="text-center text-gray-400 py-20">Loading your listings...</div>
                 )}
-
+                {/*error*/}
                 {error && (
                     <div className="text-center text-red-500 py-20">{error}</div>
                 )}
-
+                {/*empty state*/}
                 {!loading && !error && ownListings.length === 0 && (
-                    <div className="text-center text-gray-400 py-20">You have no listings yet.</div>
+                    <div className="text-center text-gray-400 py-20">
+                        {'No listings yet. Go to home and create one!'}
+                    </div>
+
                 )}
 
                 {!loading && !error && ownListings.length > 0 && (
@@ -78,13 +81,13 @@ export default function ViewOwnListings() {
                                             <span className="text-[#4E3629] font-bold text-sm whitespace-nowrap">${listing.price}</span>
                                             <button
                                                 type="button"
-                                                onClick={e => { e.stopPropagation(); updateListing(listing.item_id); }}
+                                                onClick={e => {e.stopPropagation(); updateListing(listing.item_id);}}
                                                 className="text-gray-400 hover:text-[#4E3629] transition-colors">
                                                 <Pencil size={15} />
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={e => { e.stopPropagation(); deleteListing(listing.item_id); }}
+                                                onClick={e => {e.stopPropagation(); deleteListing(listing.item_id);}}
                                                 className="text-gray-400 hover:text-red-500 transition-colors">
                                                 <Trash2 size={15} />
                                             </button>
