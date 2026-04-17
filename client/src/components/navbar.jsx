@@ -30,6 +30,7 @@ export default function Navbar() {
             <Link to="/home/listings/saved" className={navLink('/home/listings/saved')}>Saved Listings</Link>
             <Link to="/home/listings/own" className={navLink('/home/listings/own')}>My Listings</Link>
             <Link to="/home/listings/purchased" className={navLink('/home/listings/purchased')}>Purchased</Link>
+            <Link to="/home/messages" className={navLink('/home/messages')}>Messages</Link>
           </>
         )}
 
@@ -44,9 +45,16 @@ export default function Navbar() {
       {/*logout*/}
       <div className="flex items-center gap-4 text-sm">
         <span className="text-white/60">{user?.name}</span>
+        {isStudent && (
+          <button
+            onClick={() => navigate('/home/profile')}
+            className="bg-white/10 hover:bg-white/20 transition-colors px-4 py-1.5 rounded text-white text-sm cursor-pointer">
+            Update Profile
+          </button>
+        )}
         <button
           onClick={handleLogout}
-          className="bg-white/10 hover:bg-white/20 transition-colors px-4 py-1.5 rounded text-white text-sm">
+          className="bg-white/10 hover:bg-white/20 transition-colors px-4 py-1.5 rounded text-white text-sm cursor-pointer">
           Logout
         </button>
       </div>
