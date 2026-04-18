@@ -25,9 +25,6 @@ router.get('/get-own-listings',authenticate,async(req,res)=>{
         const ownListings = await prisma.listing.findMany(
             {where:{seller_id:req.user.id}}
         )
-        if (ownListings.length==0){
-            return res.status(200).json({message:"No listings"})
-        }
         res.status(200).json(ownListings)
 
     }catch(err){
@@ -64,6 +61,19 @@ router.get('/view-listing/:item_id',authenticate,async(req, res)=>{
         }
         res.status(200).json(listing)
 
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error:'Server error'})
+    }
+})
+
+//get purchased listings
+router.get('/get-purchased',authenticate,async(req,res)=>{
+    try{
+        const purchased = await prisma.listing.findMany({
+            where:{buyer_id: req.user.id, is_sold: true}
+        })
+        res.status(200).json(purchased)
     }catch(err){
         console.error(err)
         res.status(500).json({error:'Server error'})
