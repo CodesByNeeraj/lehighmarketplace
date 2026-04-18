@@ -64,4 +64,30 @@ router.put('/mark-sold/:listing_id', authenticate, async(req, res) => {
     }
 })
 
+//unmark listing as sold. this will reverse the sale (clears buyer_id and is_sold)
+router.put('/unmark-sold/:listing_id', authenticate, async(req, res) => {
+    try{
+        const {listing_id} = req.params
+        const sellerId = req.user.id
+
+        const listing = await prisma.listing.findUnique({where:{item_id: listing_id}})
+        if (!listing){
+            return res.status(404).json({error:"Listing not found"})
+        }
+        if (listing.seller_id !== sellerId){
+            return res.status(403).json({error:"Forbidden"})
+        }
+
+        await prisma.listing.update({
+            where:{item_id: listing_id},
+            data:{is_sold: false, buyer_id: null}
+        })
+        res.status(200).json({message:"Listing unmarked as sold"})
+
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error:"Internal server error"})
+    }
+})
+
 export default router;
