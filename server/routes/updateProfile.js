@@ -14,13 +14,17 @@ router.put('/update-profile',authenticate,async(req,res)=>{
             data.bio = bio
         }
         if (gender !== undefined){
-            data.gender = gender
+            data.gender = gender || null
         }
         if (age !== undefined){
-            data.age = age
+            data.age = age ? parseInt(age) : null
+        }
+        const profile = await prisma.studentProfile.findUnique({where:{student_id:studentId}})
+        if (!profile){
+            return res.status(404).json({error:"Profile not found"})
         }
         await prisma.studentProfile.update({
-            where:{student_id:studentId},
+            where:{profile_id: profile.profile_id},
             data
         })
     res.status(200).json({message:"Profile updated successfully"})
@@ -31,3 +35,5 @@ router.put('/update-profile',authenticate,async(req,res)=>{
     }
 
 })
+
+export default router;
