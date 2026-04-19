@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import api from '../../api/client';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Navbar from '../../components/navbar.jsx';
+import {useAuth} from '../../context/authContext.jsx';
 
 export default function ViewSaved(){
     const [listings,setListings] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [query,setQuery]=useState('')
+    const {user} = useAuth()
     const navigate = useNavigate();
 
     const viewListing = (id)=>{
@@ -32,7 +34,7 @@ export default function ViewSaved(){
             <Navbar/>
             <main className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold text-[#4E3629]">Saved Listings</h1>
-                <p className="text-sm text-gray-500 mb-6">View Saved</p>
+                <p className="text-sm text-gray-500 mb-6">Get them before they are gone!</p>
                 {/*search bar*/}
                 <input
                     type="text"
@@ -53,7 +55,7 @@ export default function ViewSaved(){
                 {/*empty state*/}
                 {!loading && !error && filteredListings.length === 0 && (
                     <div className="text-center text-gray-400 py-20">
-                        {query ? 'No listings match your search.' : 'No listings yet. Tell your friends to create one!'}
+                        {query ? 'No listings match your search.' : 'Go save some listings!'}
                     </div>
                 )}
                 {/*3 column grid*/}
@@ -87,7 +89,14 @@ export default function ViewSaved(){
                                         <span className="text-xs bg-[#f5f0eb] text-[#4E3629] px-2 py-1 rounded font-medium">
                                             {listing.condition.replace('_', ' ')}
                                         </span>
-                                        <span className="text-xs text-gray-400">{listing.meetup_location}</span>
+                                        {/*if the listing is sold, and if the user who saved that listing is the one who bought it, we will show Purchased. Else we will show Already Sold*/}
+                                        {listing.is_sold && listing.buyer_id === user?.id ? (
+                                            <span className="text-xs text-green-600 font-medium">Purchased</span>
+                                        ) : listing.is_sold ? (
+                                            <span className="text-xs text-red-400 font-medium">Already Sold</span>
+                                        ) : (
+                                            <span className="text-xs text-gray-400">{listing.meetup_location}</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
