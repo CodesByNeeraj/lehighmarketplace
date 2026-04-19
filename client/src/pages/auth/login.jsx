@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import api from '../../api/client';
-import { useAuth } from '../../context/authContext';
+import {useAuth} from '../../context/authContext';
 import lehighImg from '/ClaytonUni.jpg';
 
 export default function Login() {
@@ -18,6 +18,7 @@ export default function Login() {
 
     try {
       const {data} = await api.post('/auth/login', form);
+      //save token and student object to localStorage to survive a refresh
       login(data.token, data.student);
 
       //redirect based on role
