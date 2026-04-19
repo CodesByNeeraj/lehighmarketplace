@@ -38,6 +38,7 @@ export default function Register() {
 
     try {
       const { data } = await api.post('/auth/register', form);
+      //immediately login user post registration. token and student data saved to localStorage
       login(data.token, data.student);
       navigate('/home/listings');
     } catch (err) {
