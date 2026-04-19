@@ -10,20 +10,39 @@ export default function Messages(){
     const {listing_id} = useParams()
     const {user} = useAuth()
     const [messages, setMessages] = useState([])
+    const [conversation, setConversation] = useState(null)
     const [messageText, setMessageText] = useState('')
     const [loading, setLoading] = useState(true)
     const [sending, setSending] = useState(false)
+    const [sold, setSold] = useState(false)
+    const [listingTitle, setListingTitle] = useState('')
     const [error, setError] = useState('')
     const bottomRef = useRef(null)
 
     useEffect(() => {
-        api.get(`/messages/get-messages/${listing_id}`)
-            .then(res => setMessages(res.data.messages))
+        Promise.all([
+            api.get(`/messages/get-messages/${listing_id}`),
+            api.get(`/listings/view-listing/${listing_id}`)
+        ])
+            .then(([msgRes, listingRes]) => {
+                setConversation(msgRes.data)
+                setMessages(msgRes.data.messages)
+                setSold(listingRes.data.is_sold)
+                setListingTitle(listingRes.data.title)
+            })
             .catch(err => {
                 if (err.response?.status !== 404) setError('Failed to load messages.')
             })
             .finally(() => setLoading(false))
     },[listing_id])
+
+    const isSeller = conversation?.seller_id === user?.id
+
+    const markAsSold = () => {
+        api.put(`/listings/mark-sold/${listing_id}`)
+            .then(() => setSold(true))
+            .catch(() => setError('Failed to mark as sold.'))
+    }
 
     //scroll to bottom whenever new messages come in
     useEffect(() => {
@@ -47,7 +66,7 @@ export default function Messages(){
     return (
         <div className="min-h-screen bg-white text-[#1a1a1a] flex flex-col">
             <Navbar/>
-            <main className="max-w-2xl w-full mx-auto px-6 py-8 flex flex-col flex-1">
+            <main className="max-w-6xl w-full mx-auto px-6 py-8 flex flex-col flex-1">
                 {/*when convo is opened, user has option to go back to messages*/}
                 <button
                     type="button"
@@ -55,7 +74,21 @@ export default function Messages(){
                     className="text-sm text-[#4E3629] hover:underline mb-4 self-start">
                     Back to Messages
                 </button>
-                <h1 className="text-xl font-bold text-[#4E3629] mb-6">Messages</h1>
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-xl font-bold text-[#4E3629]">Messages</h1>
+                        {listingTitle && <p className="text-sm text-gray-500 mt-0.5">Re: {listingTitle}</p>}
+                    </div>
+                    {isSeller && (
+                        <button
+                            type="button"
+                            onClick={markAsSold}
+                            disabled={sold}
+                            className="text-sm px-4 py-1.5 rounded border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-default border-green-500 text-green-600 hover:bg-green-50">
+                            {sold ? 'Marked as Sold' : 'Mark as Sold'}
+                        </button>
+                    )}
+                </div>
                 {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
                 {/*messages area*/}
                 <div className="flex-1 border border-gray-200 rounded-lg p-4 overflow-y-auto flex flex-col gap-3 min-h-[400px] max-h-[500px]">
