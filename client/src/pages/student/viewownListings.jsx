@@ -32,6 +32,14 @@ export default function ViewOwnListings() {
         navigate(`/home/listings/update/${id}`)
     }
 
+    const unmarkSold = (id) => {
+        api.put(`/listings/unmark-sold/${id}`)
+            .then(() => setOwnListings(prev =>
+                prev.map(l => l.item_id === id ? {...l, is_sold: false, buyer_id: null} : l)
+            ))
+            .catch(() => setError('Failed to unmark listing.'))
+    }
+
     return (
         <div className="min-h-screen bg-white text-[#1a1a1a]">
             <Navbar></Navbar>
@@ -98,7 +106,16 @@ export default function ViewOwnListings() {
                                         <span className="text-xs bg-[#f5f0eb] text-[#4E3629] px-2 py-1 rounded font-medium">
                                             {listing.condition.replace('_', ' ')}
                                         </span>
-                                        <span className="text-xs text-gray-400">{listing.meetup_location}</span>
+                                        {listing.is_sold ? (
+                                            <button
+                                                type="button"
+                                                onClick={e => {e.stopPropagation(); unmarkSold(listing.item_id);}}
+                                                className="text-xs text-green-600 font-medium hover:text-red-400 transition-colors cursor-pointer">
+                                                Sold · Undo
+                                            </button>
+                                        ) : (
+                                            <span className="text-xs text-gray-400">{listing.meetup_location}</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
