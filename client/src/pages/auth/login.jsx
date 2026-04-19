@@ -7,7 +7,7 @@ import lehighImg from '/ClaytonUni.jpg';
 export default function Login() {
   const {login} = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({name: '', email: '', password: ''});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +17,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/login', form);
+      const {data} = await api.post('/auth/login', form);
       login(data.token, data.student);
 
       //redirect based on role
@@ -53,7 +53,7 @@ export default function Login() {
         </div>
         <div>
           <p className="text-white/50 text-sm">
-            Note: This marketplace does not fall under Lehigh University's jurisdiction. 
+            Lehigh University Marketplace - not affiliated with or endorsed by Lehigh University. 
           </p>
         </div>
       </div>
@@ -110,6 +110,11 @@ export default function Login() {
             Don't have an account?{' '}
             <Link to="/register" className="text-[#4E3629] font-medium hover:underline">
               Register
+            </Link>
+          </p>
+          <p className="mt-6 text-sm text-gray-500 text-center">
+            <Link to="/reset-password" className="text-[#4E3629] font-medium hover:underline">
+              Forget Password?
             </Link>
           </p>
         </div>

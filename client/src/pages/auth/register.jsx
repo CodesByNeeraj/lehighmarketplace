@@ -8,13 +8,13 @@ export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
   
-  // 1 = enter email, 2 = enter code + details
+  //1 = enter email, 2 = enter code + details
   const [step, setStep] = useState(1); 
   const [form, setForm] = useState({ name: '', email: '', password: '', code: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // step 1: send the verification code
+  //step 1: send the verification code
   const handleSendCode = async (e) => {
     e.preventDefault();
     setError('');
@@ -30,7 +30,7 @@ export default function Register() {
     }
   };
 
-  // step 2: submit registration
+  //step 2: submit registration
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
@@ -49,7 +49,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-white flex">
-      {/* left panel */}
+      {/*left panel*/}
       <div className="hidden lg:flex w-1/2 bg-[#4E3629] flex-col justify-between p-12">
         <div>
           <h1 className="text-white text-2xl font-semibold tracking-tight">
@@ -67,16 +67,16 @@ export default function Register() {
         </div>
         <div>
           <p className="text-white/50 text-sm">
-            The Official Lehigh University Marketplace
+            Lehigh University Marketplace - not affiliated with or endorsed by Lehigh University.
           </p>
         </div>
       </div>
 
-      {/* right panel */}
+      {/*right panel*/}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
 
-          {/* step by step indicators */}
+          {/*step by step indicators*/}
           <div className="flex items-center gap-2 mb-8">
             <div className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium
               ${step >= 1 ? 'bg-[#4E3629] text-white' : 'bg-gray-100 text-gray-400'}`}>
@@ -88,7 +88,7 @@ export default function Register() {
               2
             </div>
           </div>
-
+          {/*enter email to receive verification code*/}
           {step === 1 && (
             <>
               <h2 className="text-2xl font-semibold text-[#1a1a1a] mb-1">Create account</h2>
@@ -101,7 +101,7 @@ export default function Register() {
                   {error}
                 </div>
               )}
-
+              {/*send verification code*/}
               <form onSubmit={handleSendCode} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -126,7 +126,6 @@ export default function Register() {
               </form>
             </>
           )}
-
           {step === 2 && (
             <>
               <h2 className="text-2xl font-semibold text-[#1a1a1a] mb-1">Verify & complete</h2>
@@ -139,7 +138,7 @@ export default function Register() {
                   {error}
                 </div>
               )}
-
+              {/*verify verification code*/}
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -202,7 +201,7 @@ export default function Register() {
                   ← Back
                 </button>
 
-                {/* Resend code */}
+                {/*resend code*/}
                 <p className="text-center text-sm text-gray-500">
                   Didn't receive a code?{' '}
                   <button
