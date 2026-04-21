@@ -1,7 +1,7 @@
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import {useAuth} from '../context/authContext';
 
-export default function Navbar() {
+export default function Navbar(){
   const {user, logout, isStudent, isAdmin} = useAuth();
   const navigate = useNavigate();
   const {pathname} = useLocation();
@@ -16,7 +16,7 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-[#4E3629] text-white px-8 py-4 flex items-center justify-between">
-      <Link to={isStudent ? '/home/listings' : '/admin'} className="flex items-center gap-3">
+      <Link to={isStudent ? '/home/listings' : '/admin/home/listings'} className="flex items-center gap-3">
         <span className="text-white font-semibold text-lg tracking-tight">
           Lehigh University <span className="text-[#A67C52]">Marketplace</span>
         </span>
@@ -36,8 +36,8 @@ export default function Navbar() {
 
         {isAdmin && (
           <>
-            <Link to="/admin/listings" className={navLink('/admin/listings')}>Home</Link>
-            <Link to="/admin/listings/removed" className={navLink('/admin/listings/removed')}>Removed</Link>
+            <Link to="/admin/home/listings" className={navLink('/admin/home/listings')}>Home</Link>
+            <Link to="/admin/listings/deleted" className={navLink('/admin/listings/deleted')}>Removed</Link>
           </>
         )}
       </div>
