@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const conditions = ['New', 'Like_New', 'Acceptable', 'Poor'];
 
-export default function UpdateListing() {
+export default function UpdateListing(){
     const navigate = useNavigate();
     const {item_id} = useParams();
     const [title, setTitle] = useState('');
@@ -30,17 +30,17 @@ export default function UpdateListing() {
             })
             .catch(() => setError('Failed to load listing.'))
             .finally(() => setFetchLoading(false));
-    }, [item_id]);
+    },[item_id]);
 
     const handleSubmission = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        try {
+        try{
             let image_url = null;
             //upload new image to cloudinary if one was selected
-            if (image) {
+            if(image) {
                 const formData = new FormData();
                 formData.append('image', image);
                 const uploadRes = await api.post('/upload/upload-image', formData, {
@@ -48,7 +48,8 @@ export default function UpdateListing() {
                 });
                 image_url = uploadRes.data.image_url;
             }
-
+            
+            //udate listing backend api call
             await api.put(`/listings/update-listing/${item_id}`, {
                 title,
                 description,
@@ -60,17 +61,19 @@ export default function UpdateListing() {
 
             navigate('/home/listings/own');
 
-        } catch (err) {
+        }catch (err) {
             setError('Failed to update listing. Please try again.');
             console.error(err);
-        } finally {
+        }finally {
             setLoading(false);
         }
     };
 
-    if (fetchLoading) return <div className="text-center text-gray-400 py-20">Loading...</div>;
+    if(fetchLoading){
+        return <div className="text-center text-gray-400 py-20">Loading...</div>;
+    }
 
-    return (
+    return(
         <div className="min-h-screen bg-white text-[#1a1a1a]">
             <main className="max-w-2xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold text-[#4E3629] mb-1">Update Listing</h1>
