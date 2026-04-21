@@ -11,6 +11,7 @@ export default function MessagesTab(){
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
+    //show all messages with different buyers
     useEffect(() => {
         api.get('/messages/get-conversations')
             .then(res => setConversations(res.data))
@@ -21,7 +22,7 @@ export default function MessagesTab(){
     return (
         <div className="min-h-screen bg-white text-[#1a1a1a]">
             <Navbar/>
-            <main className="max-w-2xl mx-auto px-6 py-10">
+            <main className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-2xl font-bold text-[#4E3629] mb-1">Messages</h1>
                 <p className="text-sm text-gray-500 mb-6">Your conversations</p>
                 {loading && <p className="text-center text-gray-400 py-20">Loading...</p>}
@@ -39,6 +40,7 @@ export default function MessagesTab(){
                             return (
                                 <div
                                     key={convo.conversation_id}
+                                    //will go to full chat interface when clicked on a message
                                     onClick={() => navigate(`/home/messages/${convo.listing.item_id}`)}
                                     className="flex items-center justify-between py-4 cursor-pointer hover:bg-[#faf8f6] px-2 rounded-lg transition-colors">
                                     {/*ig style dms. other person's name and product name in brown will be visible + date on right*/}
