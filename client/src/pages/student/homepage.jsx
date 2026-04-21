@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import api from '../../api/client';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Navbar from '../../components/navbar.jsx';
-import { useAuth } from '../../context/authContext.jsx';
+import {useAuth} from '../../context/authContext.jsx';
 
-export default function Homepage() {
+export default function Homepage(){
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -15,7 +15,7 @@ export default function Homepage() {
     const {user} = useAuth();
     const navigate = useNavigate();
 
-    const viewListing = (id) => {
+    const viewListing = (id) =>{
         navigate(`/home/listings/${id}`);
     }
 
@@ -29,7 +29,8 @@ export default function Homepage() {
         .filter(listing =>
             listing.title.toLowerCase().includes(query.toLowerCase()) ||
             listing.description.toLowerCase().includes(query.toLowerCase()))
-
+    
+    //display weather
     useEffect(()=>{
         api.get('/current/weather')
         .then(res=> {
@@ -40,6 +41,7 @@ export default function Homepage() {
         .catch(err => console.error('Weather fetch failed:', err))
     }, [])
 
+    //function to display listings
     useEffect(() => {
         api.get('/listings/get-listings')
             .then(res => setListings(res.data))
