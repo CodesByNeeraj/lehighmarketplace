@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import {Link, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
-import { useAuth } from '../../context/authContext';
+import {useAuth} from '../../context/authContext';
 import lehighImg from '/ClaytonUni.jpg';
 
-export default function Register() {
-  const { login } = useAuth();
+export default function Register(){
+  const {login} = useAuth();
   const navigate = useNavigate();
   
   //1 = enter email, 2 = enter code + details
@@ -36,19 +36,19 @@ export default function Register() {
     setError('');
     setLoading(true);
 
-    try {
-      const { data } = await api.post('/auth/register', form);
+    try{
+      const {data} = await api.post('/auth/register', form);
       //immediately login user post registration. token and student data saved to localStorage
       login(data.token, data.student);
       navigate('/home/listings');
-    } catch (err) {
+    }catch (err){
       setError(err.response?.data?.error || 'Registration failed');
-    } finally {
+    }finally{
       setLoading(false);
     }
   };
 
-  return (
+  return(
     <div className="min-h-screen bg-white flex">
       {/*left panel*/}
       <div className="hidden lg:flex w-1/2 bg-[#4E3629] flex-col justify-between p-12">
