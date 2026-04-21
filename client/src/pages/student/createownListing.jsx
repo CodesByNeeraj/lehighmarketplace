@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 //from prisma Condition schema
 const conditions = ['New', 'Like_New', 'Acceptable', 'Poor'];
 
-export default function CreateListing() {
+export default function CreateListing(){
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -16,6 +16,7 @@ export default function CreateListing() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    //function to call when listing is being submitted
     const handleSubmission = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -28,7 +29,7 @@ export default function CreateListing() {
                 const formData = new FormData();
                 formData.append('image', image);
                 const uploadRes = await api.post('/upload/upload-image', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                    headers: {'Content-Type': 'multipart/form-data'}
                 });
                 image_url = uploadRes.data.image_url;
             }
@@ -39,7 +40,7 @@ export default function CreateListing() {
                 description,
                 price,
                 condition,
-                meetup_location: meetupLocation,
+                meetup_location:meetupLocation,
                 image_url,
             });
 
