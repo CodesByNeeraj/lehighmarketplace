@@ -15,6 +15,7 @@ export default function Messages(){
     const [loading, setLoading] = useState(true)
     const [sending, setSending] = useState(false)
     const [sold, setSold] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
     const [listingTitle, setListingTitle] = useState('')
     const [error, setError] = useState('')
     const bottomRef = useRef(null)
@@ -28,6 +29,7 @@ export default function Messages(){
                 setConversation(msgRes.data)
                 setMessages(msgRes.data.messages)
                 setSold(listingRes.data.is_sold)
+                setIsDeleted(listingRes.data.is_deleted)
                 setListingTitle(listingRes.data.title)
             })
             .catch(err => {
@@ -36,8 +38,10 @@ export default function Messages(){
             .finally(() => setLoading(false))
     },[listing_id])
 
+    //here we check: is it seller or buyer?
     const isSeller = conversation?.seller_id === user?.id
 
+    //seller can mark as sold
     const markAsSold = () => {
         api.put(`/listings/mark-sold/${listing_id}`)
             .then(() => setSold(true))
@@ -79,15 +83,19 @@ export default function Messages(){
                         <h1 className="text-xl font-bold text-[#4E3629]">Messages</h1>
                         {listingTitle && <p className="text-sm text-gray-500 mt-0.5">Re: {listingTitle}</p>}
                     </div>
-                    {isSeller && (
-                        <button
-                            type="button"
-                            onClick={markAsSold}
-                            disabled={sold}
-                            className="text-sm px-4 py-1.5 rounded border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-default border-green-500 text-green-600 hover:bg-green-50">
-                            {sold ? 'Marked as Sold' : 'Mark as Sold'}
-                        </button>
-                    )}
+                    {/*handlecase where listing is deleted*/}
+                    {isDeleted
+                        ? <span className="text-sm px-4 py-1.5 rounded border border-red-300 text-red-400 bg-red-50">Listing has been deleted</span>
+                        : isSeller && (
+                            <button
+                                type="button"
+                                onClick={markAsSold}
+                                disabled={sold}
+                                className="text-sm px-4 py-1.5 rounded border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-default border-green-500 text-green-600 hover:bg-green-50">
+                                {sold ? 'Marked as Sold' : 'Mark as Sold'}
+                            </button>
+                        )
+                    }
                 </div>
                 {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
                 {/*messages area*/}
