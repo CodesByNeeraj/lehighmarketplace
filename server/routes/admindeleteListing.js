@@ -6,7 +6,7 @@ import prisma from '../db/prisma.js';
 const router = express.Router();
 
 //authenticate sets req.user from the JWT, isAdmin then checks if role is ADMIN
-router.delete('/admin/delete-listing/:item_id',authenticate,isAdmin,async(req,res)=>{
+router.delete('/delete-listing/:item_id',authenticate,isAdmin,async(req,res)=>{
     try{
         const item_id = req.params.item_id
         const listing = await prisma.listing.findUnique({where:{item_id}})
