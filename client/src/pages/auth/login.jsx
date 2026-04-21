@@ -4,43 +4,45 @@ import api from '../../api/client';
 import {useAuth} from '../../context/authContext';
 import lehighImg from '/ClaytonUni.jpg';
 
-export default function Login() {
+export default function Login(){
   const {login} = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({name: '', email: '', password: ''});
+  const [form, setForm] = useState({email: '', password: ''});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    try {
-      const {data} = await api.post('/auth/login', form);
-      //save token and student object to localStorage to survive a refresh
-      login(data.token, data.student);
-
-      //redirect based on role
-      if (data.student.role === 'ADMIN') {
-        navigate('/admin');
-      } else {
+    try{
+      //admin login (admin option selected)
+      if (isAdmin){
+        const {data} = await api.post('/admin/admin-login', form);
+        login(data.token, data.admin);
+        navigate('/admin/home/listings');
+        //student login
+      }else{
+        const {data} = await api.post('/auth/login', form);
+        login(data.token, data.student);
         navigate('/home/listings');
       }
-    } catch (err) {
+    }catch (err){
       setError(err.response?.data?.error || 'Invalid credentials');
-    } finally {
+    }finally{
       setLoading(false);
     }
   };
 
-  return (
+  return(
     <div className="min-h-screen bg-white flex">
       {/*left panel*/}
       <div className="hidden lg:flex w-1/2 bg-[#4E3629] flex-col justify-between p-12">
         <div>
           <h1 className="text-white text-2xl font-semibold tracking-tight">
-            Lehigh University Marketplace 
+            Lehigh University Marketplace
             <br></br>
             <span className="text-[#A67C52]">Sell what you can. Buy what you want.</span>
           </h1>
@@ -54,7 +56,7 @@ export default function Login() {
         </div>
         <div>
           <p className="text-white/50 text-sm">
-            Lehigh University Marketplace - not affiliated with or endorsed by Lehigh University. 
+            Lehigh University Marketplace - not affiliated with or endorsed by Lehigh University.
           </p>
         </div>
       </div>
@@ -62,7 +64,23 @@ export default function Login() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
           <h2 className="text-2xl font-semibold text-[#1a1a1a] mb-1">Welcome back</h2>
-          <p className="text-sm text-gray-500 mb-8">Sign in to your account</p>
+          <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
+
+          {/*admin toggle*/}
+          <div className="flex items-center gap-2 mb-6">
+            <button
+              type="button"
+              onClick={() => setIsAdmin(false)}
+              className={`flex-1 py-1.5 rounded text-sm font-medium border transition-colors ${!isAdmin ? 'bg-[#4E3629] text-white border-[#4E3629]' : 'bg-white text-gray-500 border-gray-200 hover:border-[#4E3629]'}`}>
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsAdmin(true)}
+              className={`flex-1 py-1.5 rounded text-sm font-medium border transition-colors ${isAdmin ? 'bg-[#4E3629] text-white border-[#4E3629]' : 'bg-white text-gray-500 border-gray-200 hover:border-[#4E3629]'}`}>
+              Admin
+            </button>
+          </div>
 
           {error && (
             <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded">
@@ -106,18 +124,22 @@ export default function Login() {
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
-
-          <p className="mt-6 text-sm text-gray-500 text-center">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-[#4E3629] font-medium hover:underline">
-              Register
-            </Link>
-          </p>
-          <p className="mt-6 text-sm text-gray-500 text-center">
-            <Link to="/reset-password" className="text-[#4E3629] font-medium hover:underline">
-              Forget Password?
-            </Link>
-          </p>
+          {/*student registration / reset password*/}
+          {!isAdmin && (
+            <>
+              <p className="mt-6 text-sm text-gray-500 text-center">
+                Don't have an account?{' '}
+                <Link to="/register" className="text-[#4E3629] font-medium hover:underline">
+                  Register
+                </Link>
+              </p>
+              <p className="mt-3 text-sm text-gray-500 text-center">
+                <Link to="/reset-password" className="text-[#4E3629] font-medium hover:underline">
+                  Forget Password?
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
