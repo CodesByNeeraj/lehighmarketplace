@@ -1,17 +1,19 @@
-import { useState } from 'react';
-import { ShoppingBag, MessageCircle, Shield, Search } from 'lucide-react';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {ShoppingBag, MessageCircle, Shield, Search} from 'lucide-react';
 import api from '../../api/client';
 
 export default function Landing() {
-    // smooth scroll to a section by id
-    const scrollTo = (id) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    }
+    const navigate = useNavigate();
+    // const scrollTo = (id) => {
+    //     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    // }
     const [waitlistEmail, setWaitlistEmail] = useState('');
     const [waitlistStatus, setWaitlistStatus] = useState('');
     const [loading, setLoading] = useState(false);
 
     // handle waitlist form submission
+    //now turned into a feedback form collection 
     const handleWaitlist = async (e) => {
         e.preventDefault();
         if (!waitlistEmail.endsWith('@lehigh.edu')) {
@@ -20,23 +22,27 @@ export default function Landing() {
             return;
         }
         setLoading(true);
-        try {
-            await api.post('/waitlist/save-to-waitlist', { email: waitlistEmail });
+        try{
+            await api.post('/waitlist/save-to-waitlist', {email: waitlistEmail});
             setWaitlistStatus('success');
             setWaitlistEmail('');
-        } catch (err) {
-            if (err.response?.status === 409) {
+        }catch(err){
+            if (err.response?.status === 409){
                 setWaitlistStatus('duplicate');
-            } else {
+            }else{
                 setWaitlistStatus('error');
             }
-        } finally {
+        }finally{
             setLoading(false);
             setTimeout(() => setWaitlistStatus(''), 3000);
         }
     }
 
-    return (
+    const navigateLogin = ()=>{
+        navigate(`/login`)
+    }
+
+    return(
         <div className="min-h-screen bg-white text-[#1a1a1a]">
 
             {/* navbar */}
@@ -45,9 +51,9 @@ export default function Landing() {
                     Lehigh University <span className="text-[#A67C52]">Marketplace</span>
                 </span>
                 <button
-                    onClick={() => scrollTo('waitlist')}
-                    className="bg-white text-[#4E3629] hover:bg-[#f5f0eb] transition-colors px-4 md:px-5 py-2 rounded text-sm font-medium whitespace-nowrap">
-                    Join Waitlist
+                    onClick={navigateLogin}
+                    className="bg-white text-[#4E3629] hover:bg-[#f5f0eb] transition-colors px-4 md:px-5 py-2 rounded text-sm font-medium whitespace-nowrap cursor-pointer">
+                    Join Now!
                 </button>
             </nav>
 
@@ -65,9 +71,9 @@ export default function Landing() {
                 </p>
                 <div className="flex gap-4">
                     <button
-                        onClick={() => scrollTo('waitlist')}
-                        className="bg-white text-[#4E3629] hover:bg-[#f5f0eb] transition-colors px-6 py-3 rounded text-sm font-semibold">
-                        Join Waitlist
+                        onClick={navigateLogin}
+                        className="bg-white text-[#4E3629] hover:bg-[#f5f0eb] transition-colors px-6 py-3 rounded text-sm font-semibold cursor-pointer">
+                        Join Now!
                     </button>
                 </div>
             </section>
@@ -118,10 +124,10 @@ export default function Landing() {
             {/* waitlist section */}
             <section id="waitlist" className="bg-[#faf7f4] px-4 md:px-8 py-16 md:py-20 flex flex-col items-center text-center">
                 <h2 className="text-2xl font-semibold text-[#4E3629] mb-2">
-                    Join the waiting list
+                    Have Feedback or Feature Requests?
                 </h2>
                 <p className="text-gray-500 text-sm mb-8 max-w-md">
-                    Be the first to know when new features drop. Enter your Lehigh email below.
+                    Drop your email here and we will reach out to you.
                 </p>
 
                 <form onSubmit={handleWaitlist} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
@@ -137,19 +143,19 @@ export default function Landing() {
                         type="submit"
                         disabled={loading}
                         className="bg-[#4E3629] hover:bg-[#3d2a1f] disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-2 rounded text-sm font-medium transition-colors">
-                        {loading ? 'Joining...' : 'Join'}
+                        {loading ? 'Sending...' : 'Send'}
                     </button>
                 </form>
 
                 {/* waitlist feedback messages */}
                 {waitlistStatus === 'success' && (
-                    <p className="mt-4 text-sm text-green-600">You are on the list!</p>
+                    <p className="mt-4 text-sm text-green-600">We will reach out!</p>
                 )}
                 {waitlistStatus === 'error' && (
                     <p className="mt-4 text-sm text-red-500">Only @lehigh.edu emails are allowed.</p>
                 )}
                 {waitlistStatus === 'duplicate' && (
-                    <p className="mt-4 text-sm text-red-500">This email is already on the waitlist.</p>
+                    <p className="mt-4 text-sm text-red-500">This email is already on the feedback list.</p>
                 )}
             </section>
 
