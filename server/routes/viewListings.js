@@ -10,7 +10,7 @@ const router = express.Router()
 router.get('/get-listings',authenticate,async(req,res)=>{
     try{
         //find many in prisma returns an array
-        const listings = await prisma.listing.findMany({where: {is_sold:false},orderBy:{created_at:'desc'}})
+        const listings = await prisma.listing.findMany({where: {is_sold:false, is_deleted:false},orderBy:{created_at:'desc'}})
         res.status(200).json(listings)
         
     }catch(err){
@@ -23,7 +23,7 @@ router.get('/get-listings',authenticate,async(req,res)=>{
 router.get('/get-own-listings',authenticate,async(req,res)=>{
     try{
         const ownListings = await prisma.listing.findMany(
-            {where:{seller_id:req.user.id}}
+            {where:{seller_id:req.user.id, is_deleted:false}}
         )
         res.status(200).json(ownListings)
 
@@ -39,7 +39,7 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
         const savedListings = await prisma.savedListing.findMany(
             {where:{student_id:req.user.id},include:{listing:true}}
         )
-        res.status(200).json(savedListings.map(s => s.listing))
+        res.status(200).json(savedListings.map(s => s.listing).filter(l => !l.is_deleted))
 
     }catch(err){
         console.error(err)
