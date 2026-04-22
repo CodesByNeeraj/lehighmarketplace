@@ -55,3 +55,27 @@ export const sendPasswordResetEmail = async (email, code) => {
     `,
   });
 };
+
+//send notification email on new conversation 
+//if have time -> future plans:
+// export const sendNotificationemail = async (email) => {
+//   await transporter.sendMail({
+//     from: `"Lehigh University Marketplace" <${process.env.SMTP_USER}>`,
+//     to: email,
+//     subject: 'You have a new enquiry!',
+//     html: `
+//       <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">
+//         <h2>Verify your email</h2>
+//         <p>Enter this code to complete your registration:</p>
+//         <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; 
+//                     padding: 20px; background: #f4f4f4; text-align: center; 
+//                     border-radius: 8px;">
+//           ${code}
+//         </div>
+//         <p style="color: #888; font-size: 12px; margin-top: 16px;">
+//           This code expires in 10 minutes. If you didn't request this, ignore this email.
+//         </p>
+//       </div>
+//     `,
+//   });
+// };
