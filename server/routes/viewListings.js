@@ -9,7 +9,8 @@ const router = express.Router()
 //get all listings (shown in homepage)
 router.get('/get-listings',authenticate,async(req,res)=>{
     try{
-        const listings = await prisma.listing.findMany({where: {is_sold:false},orderBy:{created_at:'desc'}})
+        //find many in prisma returns an array
+        const listings = await prisma.listing.findMany({where: {is_sold:false, is_deleted:false},orderBy:{created_at:'desc'}})
         res.status(200).json(listings)
         
     }catch(err){
@@ -22,11 +23,8 @@ router.get('/get-listings',authenticate,async(req,res)=>{
 router.get('/get-own-listings',authenticate,async(req,res)=>{
     try{
         const ownListings = await prisma.listing.findMany(
-            {where:{seller_id:req.user.id}}
+            {where:{seller_id:req.user.id, is_deleted:false}}
         )
-        if (ownListings.length==0){
-            return res.status(200).json({message:"No listings"})
-        }
         res.status(200).json(ownListings)
 
     }catch(err){
@@ -40,9 +38,8 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
     try{
         const savedListings = await prisma.savedListing.findMany(
             {where:{student_id:req.user.id},include:{listing:true}}
-
         )
-        res.status(200).json(savedListings)
+        res.status(200).json(savedListings.map(s => s.listing).filter(l => !l.is_deleted))
 
     }catch(err){
         console.error(err)
@@ -53,16 +50,30 @@ router.get('/get-saved-listings',authenticate,async(req,res)=>{
 //view a particular listing
 router.get('/view-listing/:item_id',authenticate,async(req, res)=>{
     try{
-        const item_id = parseInt(req.params.item_id)
+        const item_id = req.params.item_id
+        //findUnique returns a single object - prisma rule
         const listing = await prisma.listing.findUnique({
             where:{item_id},
-            include:{seller:{select:{name:true,email:true}}}
+            include:{seller:{select:{email:true, profile:{select:{display_name:true}}}}}
         })
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
         }
         res.status(200).json(listing)
 
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error:'Server error'})
+    }
+})
+
+//get purchased listings
+router.get('/get-purchased',authenticate,async(req,res)=>{
+    try{
+        const purchased = await prisma.listing.findMany({
+            where:{buyer_id: req.user.id, is_sold: true}
+        })
+        res.status(200).json(purchased)
     }catch(err){
         console.error(err)
         res.status(500).json({error:'Server error'})

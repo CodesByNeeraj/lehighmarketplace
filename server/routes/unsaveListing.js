@@ -8,11 +8,12 @@ router.delete('/unsave-listing/:listingId',authenticate,async(req,res)=>{
     try{
         const studentId = req.user.id
         const listingId = req.params.listingId
-        const listing = await prisma.savedListing.findUnique({where:{student_id_listing_id:{student_id:studentId,listing_id:listingId}}})
+        //check if listing is in SavedListing db
+        const listing = await prisma.savedListing.findFirst({where:{student_id:studentId, listing_id:listingId}})
         if(!listing){
             return res.status(404).json({message:"Listing not found"})
         }
-        await prisma.savedListing.delete({where:{student_id_listing_id:{student_id:studentId,listing_id:listingId}}})
+        await prisma.savedListing.delete({where:{save_id:listing.save_id}})
         res.status(200).json({message:"Listing unsaved successfully"})
     }catch(err){
         console.error(err)
