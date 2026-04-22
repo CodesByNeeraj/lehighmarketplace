@@ -24,9 +24,9 @@ import getDeletedListingsRouter from './routes/getdeletedListings.js'
 dotenv.config()
 
 const app = express()
-const prod_url = process.env.VITE_URL
+const fronteend_prod_url = process.env.FRONTEND_PROD_URL
 const allowedOrigin = process.env.NODE_ENV === 'production'
-? 'prod_url'
+? fronteend_prod_url
 : 'http://localhost:5173'
 
 app.use(cors({origin:allowedOrigin}))
