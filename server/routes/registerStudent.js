@@ -1,6 +1,6 @@
 import express from "express"
 import prisma from '../db/prisma.js';
-import { sendVerificationEmail } from '../services/nodemailer.js';
+import {sendVerificationEmail, sendPasswordResetEmail} from '../services/nodemailer.js';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -9,6 +9,10 @@ const router = express.Router()
 router.post('/send-code',async(req,res)=>{
     try{
         const {email} = req.body;
+        //check if student is from lehigh
+        if (!email.endsWith('@lehigh.edu')){
+            return res.status(400).json({error:"Only lehigh university student emails are allowed!"})
+        }
         //check first if student already registered
         const existingStudent = await prisma.student.findUnique({where:{email}})
 
@@ -75,6 +79,32 @@ router.post('/register',async(req,res)=>{
 
 })
 
+//send password reset OTP. but student must already exist in the first place
+router.post('/send-reset-code', async(req, res) => {
+    try{
+        const {email} = req.body
+        if (!email.endsWith('@lehigh.edu')){
+            return res.status(400).json({error:"Only Lehigh University email addresses are allowed"})
+        }
+        const student = await prisma.student.findUnique({where:{email}})
+        if (!student){
+            return res.status(404).json({error:"No account found with this email"})
+        }
+        const code = Math.floor(100000 + Math.random() * 900000).toString()
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
+        await prisma.verificationCode.deleteMany({where:{email,type:"PASSWORD_RESET"}})
+        await prisma.verificationCode.create({
+            data:{email, code, type:"PASSWORD_RESET", expiresAt}
+        })
+        await sendPasswordResetEmail(email, code)
+        res.json({message:"Reset code sent"})
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error:"Internal server error"})
+    }
+})
+
 export default router
+
 
 
