@@ -13,10 +13,9 @@ router.delete('/delete-listing/:item_id',authenticate,isAdmin,async(req,res)=>{
         if (!listing){
             return res.status(404).json({error:"Listing not found"})
         }
-        await prisma.listing.delete({
-            where:{
-                item_id
-            }
+        await prisma.listing.update({
+            where:{item_id},
+            data:{is_deleted:true, deleted_at: new Date()}
         })
         res.status(200).json({message:"Listing successfully deleted!"})
 
