@@ -35,14 +35,14 @@ export default function App() {
           <Route path="/home/messages/:listing_id" element={<Messages/>}/>
           <Route path="/home/listings" element={<Homepage/>}/>
           <Route path="/home/listings/create" element={<CreateListing/>}/>
-          <Route path="/home/listings/:item_id" element={<ViewListing/>}/>
           <Route path="/home/listings/own" element={<ViewOwnListings/>}/>
           <Route path="/home/listings/saved" element={<ViewSaved/>}/>
-          <Route path="/home/listings/update/:item_id" element={<UpdateListing/>}/>
           <Route path="/home/listings/purchased" element={<ViewPurchased/>}/>
+          <Route path="/home/listings/update/:item_id" element={<UpdateListing/>}/>
+          <Route path="/home/listings/:item_id" element={<ViewListing/>}/>
           <Route path="/admin/home/listings" element={<AdminHomepage/>}/>
-          <Route path="/admin/listings/:item_id" element={<AdminViewListing/>}/>
           <Route path="/admin/listings/deleted" element={<AdminDeletedListings/>}/>
+          <Route path="/admin/listings/:item_id" element={<AdminViewListing/>}/>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
