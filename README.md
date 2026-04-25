@@ -124,14 +124,7 @@ cd server
 npx prisma migrate dev
 ```
 
-### 5. Seed an admin account (optional)
-
-```bash
-cd server
-node scripts/seedAdmin.js
-```
-
-### 6. Start the development servers
+### 5. Start the development servers
 
 ```bash
 # Terminal 1 — backend
