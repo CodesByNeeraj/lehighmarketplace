@@ -56,7 +56,7 @@ describe('POST /api/auth/login', () => {
 
     //check if return token
     expect(response.body.token).toBe('mock_token') 
-    //check if return correct admin info
+    //check if return correct student info
     expect(response.body.student).toEqual({
         id: mockStudent.student_id,
         email: mockStudent.email,
