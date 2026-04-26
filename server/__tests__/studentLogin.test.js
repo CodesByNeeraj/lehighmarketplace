@@ -31,15 +31,15 @@ const { default: bcrypt } = await import ('bcryptjs')
 const { default: jwt } = await import ('jsonwebtoken')
 const { default: app } = await import('../index.js')
 
+// global reset mocks to avoid leaking
+beforeEach(() => {
+  jest.resetAllMocks()
+})
+
 const mockStudent = {student_id: "1", email: 'test@lehigh.edu', password_hash: 'realpassword', profile: {display_name: 'Student'}}
 
 //verify admin login
 describe('POST /api/auth/login', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
 
   it('returns a token for student upon successful login', async () => {
     //set up mock data

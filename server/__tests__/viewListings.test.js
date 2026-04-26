@@ -26,12 +26,13 @@ jest.unstable_mockModule('../db/prisma.js', () => ({
 const { default: prisma } = await import('../db/prisma.js')
 const { default: app } = await import('../index.js')
 
+// global reset mocks to avoid leaking
+beforeEach(() => {
+  jest.resetAllMocks()
+})
+
 //get all listings (shown in homepage)
 describe('GET /api/listings/get-listings', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
   
   it('returns a list of items when authenticated', async () => {
     //set up mock data
@@ -55,10 +56,6 @@ describe('GET /api/listings/get-listings', () => {
 
 //get own listings
 describe('GET /api/listings/get-own-listings', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
 
   it('returns a list of items posted by the authenticated user', async () => {
     //set up mock data
@@ -86,10 +83,6 @@ describe('GET /api/listings/get-own-listings', () => {
 
 //get saved listings
 describe('GET /api/listings/get-saved-listings', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
 
   it('returns a list of items saved by the authenticated user', async () => {
     //set up mock data
@@ -117,10 +110,6 @@ describe('GET /api/listings/get-saved-listings', () => {
 
 //view a particular listing
 describe('GET /api/listings/view-listing/:item_id', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
 
   it('returns an item as the user wants to view', async () => {
     //set up mock data
@@ -157,10 +146,6 @@ describe('GET /api/listings/view-listing/:item_id', () => {
 
 //get purchased listings
 describe('GET /api/listings/get-purchased', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
   
   it('returns a list of items purchased by the authenticated user', async () => {
     //set up mock data

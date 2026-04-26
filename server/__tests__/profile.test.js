@@ -23,15 +23,16 @@ jest.unstable_mockModule('../db/prisma.js', () => ({
 const { default: prisma } = await import('../db/prisma.js')
 const { default: app } = await import('../index.js')
 
+// global reset mocks to avoid leaking
+beforeEach(() => {
+  jest.resetAllMocks()
+})
+
 const mockProfile = {studentId: "1", display_name: "Student", gender: "male", age: 20}
 
 //get profile details
 describe('GET /api/profile/get-profile', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-  
+
   it('returns 404 as the profile is not found', async () => {
     //set up mock data
     prisma.studentProfile.findUnique.mockResolvedValueOnce(null)
@@ -62,10 +63,6 @@ describe('GET /api/profile/get-profile', () => {
 
 //get profile details based on their student id
 describe('GET /api/profile/view-profile/:studentId', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
   
   it('returns 404 as the profile is not found', async () => {
     //set up mock data
@@ -97,10 +94,6 @@ describe('GET /api/profile/view-profile/:studentId', () => {
 
 //update profile details
 describe('GET /api/profile/update-profile', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
   
   it('returns 404 as the profile is not found', async () => {
     //set up mock data

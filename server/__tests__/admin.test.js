@@ -27,13 +27,13 @@ jest.unstable_mockModule('../db/prisma.js', () => ({
 const { default: prisma } = await import('../db/prisma.js')
 const { default: app } = await import('../index.js')
 
+// global reset mocks to avoid leaking
+beforeEach(() => {
+  jest.resetAllMocks()
+})
 
 //delete a listing if the user is admin
 describe('DELETE /api/admin/delete-listing/:item_id', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
 
   it('returns delete message if deleted successfully', async () => {
     //set up mock data
@@ -65,11 +65,7 @@ describe('DELETE /api/admin/delete-listing/:item_id', () => {
 
 //get deleted listings
 describe('GET /api/admin/get-deleted-listings', () => {
-  // Reset mocks between tests to prevent state leakage
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-  
+
   it('returns a list of items deleted by admin', async () => {
     //set up mock data
     prisma.listing.findMany.mockResolvedValueOnce([
