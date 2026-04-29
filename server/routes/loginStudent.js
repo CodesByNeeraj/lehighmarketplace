@@ -10,14 +10,15 @@ router.post('/login',async(req,res)=>{
         const {email,password} = req.body;
         //retrive the student first
         const existingStudent = await prisma.student.findUnique({where:{email},include:{profile:true}})
-        if (existingStudent){
-            const match = await bcrypt.compare(password,existingStudent.password_hash)
-            if(!match){
-                return res.status(401).json({error:"Invalid email or password"})
-            }
-            const token = jwt.sign({id:existingStudent.student_id,email:existingStudent.email,role:"STUDENT"},process.env.JWT_SECRET,{expiresIn:'7d'})
-            return res.json({token,student:{id:existingStudent.student_id,email:existingStudent.email,name:existingStudent.profile?.display_name,role:'STUDENT'}})
+        if (!existingStudent){
+            return res.status(401).json({error:"Invalid email or password"})
         }
+        const match = await bcrypt.compare(password,existingStudent.password_hash)
+        if(!match){
+            return res.status(401).json({error:"Invalid email or password"})
+        }
+        const token = jwt.sign({id:existingStudent.student_id,email:existingStudent.email,role:"STUDENT"},process.env.JWT_SECRET,{expiresIn:'7d'})
+        return res.json({token,student:{id:existingStudent.student_id,email:existingStudent.email,name:existingStudent.profile?.display_name,role:'STUDENT'}})
 
     }catch(err){
         res.status(500).json({error:"Internal server error"})
